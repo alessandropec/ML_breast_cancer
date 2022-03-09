@@ -14,7 +14,7 @@ The dataset used is uploaded in the repository and taken from https://archive.ic
 
 ## Script usage
 
-Clone the repository install dependencies and run the following command for the full results.
+Clone the repository, install dependencies, and run the following command for the full results.
 ```
 python main.py --data_dir=[path of dataset (./data/breast-cancer-wisconsin.data)]
 ```
@@ -26,7 +26,7 @@ the script *main.py* can be used with the following arguments:
                         show this help message and exit
                         
   --data_dir REQUIRED
-                        The path of .txt containing the dataset
+                        The path of the file containing the dataset
                         
   --run_analysis DEFAULT: [all]
                         The analysis to run:[no]: skip the analysis [ext]:
