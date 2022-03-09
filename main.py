@@ -348,7 +348,7 @@ if __name__ == "__main__":
     )
     parser.add_argument('--data_dir', required=True, help='The path of the file containing the dataset')
     parser.add_argument('--run_analysis',default='all',help="The analysis to run: [no]: skip the analysis [ext]: scatter of 2 extracted features [pca]: run only pca analysis [correlation]: run only correlation analysis [all]: run all analysis")
-    parser.add_argument('--run_training',default='all',help="The model to train:[no]: skip the training [rf]: random forest [svc]: support vector machine [lr]: logistic regression [knn]: k nearest neighboors [all]: all models")
+    parser.add_argument('--run_training',default='all',help="The model to train: [no]: skip the training [rf]: random forest [svc]: support vector machine [lr]: logistic regression [knn]: k nearest neighboors [all]: all models")
     parser.add_argument('--test_size',default=0.33,help="The percentage of the test set")
     args = parser.parse_args()
     print("*********LOADING, BASIC CLEANING & SPLITTING***************")
