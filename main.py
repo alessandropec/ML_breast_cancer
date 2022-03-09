@@ -16,13 +16,17 @@ from sklearn.neighbors import KNeighborsClassifier as KNN
 
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
+from sklearn.metrics import classification_report
+
+from sklearn.preprocessing import StandardScaler
+
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.base import BaseEstimator
 from sklearn.base import TransformerMixin
 
-from sklearn.metrics import classification_report
+from sklearn.neural_network import MLPClassifier
 
 
 def load_dataset(path):
@@ -221,10 +225,12 @@ def basic_clean(df):
     print("\nDataset:\n",df)
     return df
 
-def data_exploration(X_train,y_train,imp,ext,cmd):
+def data_exploration(X_train,y_train,imp,ext,scaler,cmd):
     #use the first two estimator of pipeline to process data and plot analysis
     imp_step=imp.fit_transform(X_train)
     imp_dist_step=ext.fit_transform(imp_step,y_train)
+    imp_dist_scale_step=pd.DataFrame(scaler.fit_transform(imp_dist_step),columns=imp_dist_step.columns)
+  
     if cmd=="pca" or cmd=="all":
         #PCA analysis of 1st 2nd and 3rd Principal components
         print("\n***********PCA ANALYSIS****************\n")    
@@ -235,10 +241,21 @@ def data_exploration(X_train,y_train,imp,ext,cmd):
         print("\n***********EXTRACTED FEATURES ANALYSIS****************\n")
         #Scatter of 2 new extracted features
         print(imp_dist_step)
+        print(imp_dist_scale_step)
         fig=plt.figure()
         fig.suptitle("Scatter of 2 new extracted features (only training)")
         ax=fig.add_subplot(111)
         ax.scatter(imp_dist_step["b_dist"],imp_dist_step["m_dist"],c=["red" if s=="m" else "green" for s in y_train],alpha=0.5)
+        ax.set_xlabel("Distance from benign centroid")
+        ax.set_ylabel("Distance from malign centroid")
+        line1 = plt.Line2D(range(1), range(1), color="white", marker='o', markerfacecolor="green")
+        line2 = plt.Line2D(range(1), range(1), color="white", marker='o',markerfacecolor="red")
+        ax.legend(handles=(line1,line2),labels=["Benign","Malign"])
+
+        fig2=plt.figure()
+        fig2.suptitle("Scatter of 2 new extracted features scaled (only training)")
+        ax=fig2.add_subplot(111)
+        ax.scatter(imp_dist_scale_step["b_dist"],imp_dist_scale_step["m_dist"],c=["red" if s=="m" else "green" for s in y_train],alpha=0.5)
         ax.set_xlabel("Distance from benign centroid")
         ax.set_ylabel("Distance from malign centroid")
         line1 = plt.Line2D(range(1), range(1), color="white", marker='o', markerfacecolor="green")
@@ -253,7 +270,7 @@ def data_exploration(X_train,y_train,imp,ext,cmd):
         
         correlation_analysis(df_train_no_ext,6,6,add_title="without extracted features")
 
-        df_train_ext=pd.concat([imp_dist_step,y_train],axis=1)
+        df_train_ext=pd.concat([imp_dist_scale_step,y_train],axis=1)
         correlation_analysis(df_train_ext,5,11,add_title="with extracted features")
 
 def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
@@ -287,6 +304,7 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
         print("**************Support Vector Classifier*************************")
         svc=SVC(random_state=42)
         tmpIDM=list(pipeIDM.steps) #Copy the full ipeline
+        #tmpIDM.append(("scaler",StandardScaler()))
         tmpIDM.append(("svc",svc)) #Append the model
         tmpIM=list(pipeIM.steps) #Same for the pipeline without feature extraction
         tmpIM.append(("svc",svc))
@@ -305,6 +323,7 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
         print("**************Logistic Regression*************************")
         lr=LogisticRegression(random_state=42)
         tmpIDM=list(pipeIDM.steps) #Copy the full ipeline
+ #      tmpIDM.append(("scaler",StandardScaler()))
         tmpIDM.append(("lr",lr)) #Append the model
         tmpIM=list(pipeIM.steps) #Same for the pipeline without feature extraction
         tmpIM.append(("lr",lr))
@@ -325,6 +344,7 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
         print("**************KNN*************************")
         knn=KNN()
         tmpIDM=list(pipeIDM.steps) #Copy the full ipeline
+ #      tmpIDM.append(("scaler",StandardScaler()))
         tmpIDM.append(("knn",knn)) #Append the model
         tmpIM=list(pipeIM.steps) #Same for the pipeline without feature extraction
         tmpIM.append(("knn",knn))
@@ -337,7 +357,25 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
         print("\n******Without extracted features********\n")
         train_test_model(pipeIKNN,parameters,df_train,X_test,y_test,add_title="K nearest neighboors without extracted features")
 
-
+    if cmd=="mlp" or cmd=="all":
+        #MLP
+        print("**************Neural Net MLP************************")
+        mlp=MLPClassifier(random_state=42)
+        tmpIDM=list(pipeIDM.steps) #Copy the full ipeline
+        #tmpIDM.append(("scaler",StandardScaler()))
+        tmpIDM.append(("mlp",mlp)) #Append the model
+        tmpIM=list(pipeIM.steps) #Same for the pipeline without feature extraction
+        tmpIM.append(("mlp",mlp))
+        pipeIDSVC=Pipeline(tmpIDM) #Instntiate pipeline object
+        pipeISVC=Pipeline(tmpIM)
+        parameters = {"mlp__max_iter":[200],
+                      "mlp__hidden_layer_sizes":[(100,)]}
+        #                "mlp__activation":['identity', 'logistic', 'tanh', 'relu']
+        #            }
+        #train_test_model(pipeIDSVC,parameters,df_train,X_test,y_test,add_title="MLP with extracted features")
+        print("\n******Without extracted features********\n")
+        train_test_model(pipeISVC,parameters,df_train,X_test,y_test,add_title="MLP without extracted features")
+    
 
    
 
@@ -365,6 +403,8 @@ if __name__ == "__main__":
     #Prepro pipeline
     imp=SimpleImputer(missing_values=np.NaN,strategy="median")#Replace NaN with median
     ext=DistExtractor()#Extract centroids and add 2 feature distance for beningn centroids and malign centroids
+    scaler=StandardScaler()
+    
     pipeIDM=Pipeline(steps=[("Imputer",imp),("Distance extractor",ext)])#with new feature extracted
     pipeIM=Pipeline(steps=[("Imputer",imp)])#Without feature extracted
 
@@ -372,7 +412,7 @@ if __name__ == "__main__":
 
     #Data analysis and exploration
     if args.run_analysis!='no':
-        data_exploration(X_train,y_train,imp,ext,args.run_analysis)
+        data_exploration(X_train,y_train,imp,ext,scaler,args.run_analysis)
         plt.show()
 
     if args.run_training!='no':
