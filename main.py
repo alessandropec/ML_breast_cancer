@@ -348,8 +348,8 @@ if __name__ == "__main__":
         description='Analysis/Exploration of the dataset and training of the main ML model '
     )
     parser.add_argument('--data_dir', required=True, help='The path of .txt containing the dataset')
-    parser.add_argument('--run_analysis',required=True,default='all',help="The analysis to run:\n\tno: skip the analysis\n\t:ext: scatter of 2 extracted features\n\tpca: run only pca analysis\n\tcorrelation: run only correlation analysis\n\tall: run all analysis")
-    parser.add_argument('--run_training',required=True,default='all',help="The model to train:\n\tno: skip the training\n\trf: random forest\n\tsvc: support vector machine\n\tlr: logistic regression\n\tknn: k nearest neighboors\n\tall: all models")
+     parser.add_argument('--run_analysis',required=True,default='all',help="The analysis to run:[no]: skip the analysis [ext]: scatter of 2 extracted features [pca]: run only pca analysis [correlation]: run only correlation analysis [all]: run all analysis")
+    parser.add_argument('--run_training',required=True,default='all',help="The model to train:[no]: skip the training[rf]: random forest [svc]: support vector machine [lr]: logistic regression [knn]: k nearest neighboors [all]: all models")
     parser.add_argument('--test_size',default=0.33,help="The percentage of the test set")
     args = parser.parse_args()
     print("*********LOADING, BASIC CLEANING & SLITTING***************")
