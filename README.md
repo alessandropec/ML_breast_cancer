@@ -1,5 +1,6 @@
 # An exploration of ML methods for breast cancer classification
-This repository contains the code for the exam project of "Mathematics for machine learning" course at Politecnico of Torino (years 2022)
+This repository contains the code for the exam project of "Mathematics for machine learning" course at Politecnico of Torino (years 2022).
+Please refer to the uploaded Tesina (*tesina.pdf*) for more detail on the analysis and methods used.
 
 ## Dependencies
 - **Python 3** (tested on python 3.7)
@@ -42,3 +43,7 @@ the script *main.py* can be used with the following arguments:
   --test_size DEFAULT: [0.33]
                         The percentage of the test set
   ```
+
+## Model results
+
+TO DO TABELLA CON I PRINCIPALI RISULTATI DEI VARI MODELLI
