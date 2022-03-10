@@ -170,10 +170,16 @@ def train_test_model(pipe,params,df, X_test, y_test,add_title=""):
     cross_score=est.best_score_
     print("\nCross validation results:\nPipeline:\n",est,"\nBest param:\n",est.best_params_,"\nF1 avg cross val score: ",cross_score)
 
+    pred_train=est.predict(df.drop(columns=["class"]))
+   
+    creport=classification_report(df["class"],pred_train)
+    print("\nClassification report for TRAIN:\n",creport)
+
+
     pred=est.predict(X_test)
    
     creport=classification_report(y_test,pred)
-    print("\nClassification report for test:\n",creport)
+    print("\nClassification report for TEST:\n",creport)
     conf_matrix_test=confusion_matrix(y_test,pred)
    
     fig2=plt.figure()
@@ -333,7 +339,7 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
         #Train and test in cross validation grid search and test with test data
         _,_,_,bestEst=train_test_model(pipeIDRF,parameters,df_train,X_test,y_test,add_title="Random Forest with extracted features")#With new features
         scatter_hard_sample(bestEst,df_train,pipeIDM)
-        fi=pd.DataFrame(est.steps[-1][1].feature_importances_,index=cols,columns=["Importance"])
+        fi=pd.DataFrame(bestEst.steps[-1][1].feature_importances_,index=cols,columns=["Importance"])
         print(f"Feature importance:\n {fi.head(11)}")
 
         print("\n******Without extracted features********\n")
