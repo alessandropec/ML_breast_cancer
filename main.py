@@ -42,7 +42,7 @@ def load_dataset(path):
                    index_col=False)
 
     return df
-def correlation_analysis(df,row,col,add_title=""):
+def correlation_analysis(df,add_title=""):
     '''**********************************Correlation matrix and scatters plotting************************************'''
     plt.rc('xtick', labelsize=8) 
     plt.rc('ytick', labelsize=8) 
@@ -50,11 +50,12 @@ def correlation_analysis(df,row,col,add_title=""):
 
    
     #Correlation matrix
-    fig1=plt.figure(figsize=(9, 11))
+    fig1=plt.figure()
     
     corr=df.corr()
     
     heatmap=sns.heatmap(corr,annot=True,vmin=-1,vmax=1,square=True,cmap="bwr")
+    fig1.tight_layout()
     fig1.tight_layout()
     heatmap.set_title('Correlation Heatmap '+add_title, fontdict={'fontsize':12}, pad=20)
     #heatmap.set_xticklabels(heatmap.get_xticklabels(),rotation = 10)
@@ -62,10 +63,22 @@ def correlation_analysis(df,row,col,add_title=""):
     df_no_c=df.drop(columns=["class"])
     features=df_no_c.columns
     cc=list(combinations(features,2))
-    print(f"\nNumber of group of 2 {add_title}: ",len(cc),"\nList:\n",cc)
+    #print(f"\nNumber of group of 2 features {add_title}: ",len(cc))
+    #print("List:\n",cc)
+
+    sns.set(font_scale = 0.7)
+
+    g=sns.pairplot(df.iloc[: ,:], hue = 'class',palette={"b":[0,1,0,0.5],"m":[1,0,0,0.5]},corner=True)
     
-  
-    #TO DO: set legend of colors, fix the text in order to no overlap, order the subplots like the correlation matrix
+    g.tight_layout()
+    g.tight_layout()
+
+    for i,axes in enumerate(g.axes.flat):
+       
+        if axes==None: #To fix with corener=True
+            continue
+        axes.set_ylabel(axes.get_ylabel(), rotation=0, horizontalalignment='right')
+    '''
     fig, axes = plt.subplots(row,col, figsize=(20,20),sharex=True, sharey=True) #6*6=36 total number of group of 2 features
 
     fig.suptitle('Correlation analysis of all combinations of 2 features '+add_title, fontsize=16)
@@ -79,7 +92,7 @@ def correlation_analysis(df,row,col,add_title=""):
     line1 = plt.Line2D(range(1), range(1), color="white", marker='o', markerfacecolor="green")
     line2 = plt.Line2D(range(1), range(1), color="white", marker='o',markerfacecolor="red")
     axes[0].legend(handles=(line1,line2),labels=["Benign","Malign"],loc=(-1,+1.2))  
-
+    '''
 
 
 def mypca(df,c=1,add_title=""):
@@ -268,10 +281,10 @@ def data_exploration(X_train,y_train,imp,ext,scaler,cmd):
         y_train.index=range(len(y_train))
         df_train_no_ext=pd.concat([pd.DataFrame(imp_step,columns=X_train.columns),y_train],axis=1)
         
-        correlation_analysis(df_train_no_ext,6,6,add_title="without extracted features")
+        #correlation_analysis(df_train_no_ext,6,6,add_title="without extracted features")
 
-        df_train_ext=pd.concat([imp_dist_scale_step,y_train],axis=1)
-        correlation_analysis(df_train_ext,5,11,add_title="with extracted features")
+        df_train_ext=pd.concat([imp_dist_step,y_train],axis=1)
+        correlation_analysis(df_train_ext,add_title="with extracted features")
 
 def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
     if cmd=="rf" or cmd=="all":
