@@ -242,7 +242,7 @@ def data_exploration(X_train,y_train,imp,ext,scaler,cmd):
     #use the first two estimator of pipeline to process data and plot analysis
     imp_step=imp.fit_transform(X_train)
     imp_dist_step=ext.fit_transform(imp_step,y_train)
-    imp_dist_scale_step=pd.DataFrame(scaler.fit_transform(imp_dist_step),columns=imp_dist_step.columns)
+    #imp_dist_scale_step=pd.DataFrame(scaler.fit_transform(imp_dist_step),columns=imp_dist_step.columns)
   
     if cmd=="pca" or cmd=="all":
         #PCA analysis of 1st 2nd and 3rd Principal components
@@ -254,7 +254,7 @@ def data_exploration(X_train,y_train,imp,ext,scaler,cmd):
         print("\n***********EXTRACTED FEATURES ANALYSIS****************\n")
         #Scatter of 2 new extracted features
         print(imp_dist_step)
-        print(imp_dist_scale_step)
+        #print(imp_dist_scale_step)
         fig=plt.figure()
         fig.suptitle("Scatter of 2 new extracted features (only training)")
         ax=fig.add_subplot(111)
@@ -265,15 +265,7 @@ def data_exploration(X_train,y_train,imp,ext,scaler,cmd):
         line2 = plt.Line2D(range(1), range(1), color="white", marker='o',markerfacecolor="red")
         ax.legend(handles=(line1,line2),labels=["Benign","Malign"])
 
-        fig2=plt.figure()
-        fig2.suptitle("Scatter of 2 new extracted features scaled (only training)")
-        ax=fig2.add_subplot(111)
-        ax.scatter(imp_dist_scale_step["b_dist"],imp_dist_scale_step["m_dist"],c=["red" if s=="m" else "green" for s in y_train],alpha=0.5)
-        ax.set_xlabel("Distance from benign centroid")
-        ax.set_ylabel("Distance from malign centroid")
-        line1 = plt.Line2D(range(1), range(1), color="white", marker='o', markerfacecolor="green")
-        line2 = plt.Line2D(range(1), range(1), color="white", marker='o',markerfacecolor="red")
-        ax.legend(handles=(line1,line2),labels=["Benign","Malign"])
+     
 
     if cmd=="correlation" or cmd=="all":
         print("***********CORRELATION ANALYSIS****************\n")
@@ -285,6 +277,42 @@ def data_exploration(X_train,y_train,imp,ext,scaler,cmd):
 
         df_train_ext=pd.concat([imp_dist_step,y_train],axis=1)
         correlation_analysis(df_train_ext,add_title="with extracted features")
+
+def scatter_hard_sample(model,df_train,pipeIDM):
+    
+    df_x=df_train.drop(columns="class")
+    pro_df=pipeIDM.fit_transform(df_x,df_train["class"])
+   
+    pred=model.predict(df_x)
+
+    #print(pred,pro_df,df_train)
+    tmp=df_train["class"].copy()
+    tmp.index=range(len(df_train))
+ 
+    mask= pred==tmp
+    pro_df["right"]=mask
+    
+    pro_df["class"]=tmp
+   
+    pro_df["class"]=pro_df["class"].cat.add_categories(["false benign","false malign"])
+    pro_df.loc[(pro_df["right"]==False) & (pro_df["class"]=="b"),"class"]="false malign"
+    pro_df.loc[(pro_df["right"]==False) & (pro_df["class"]=="m"),"class"]="false benign"
+
+    fig=plt.figure()
+    fig.suptitle("Scatterplot of extracted features with missclassified samples (only training)")
+
+   
+    sns.scatterplot(data=pro_df, x="b_dist", y="m_dist",hue='class',\
+        palette={"b":[0,1,0,0.25],"m":[1,0,0,0.25],"false benign":[0,1,0,1],"false malign":[1,0,0,1]},\
+        style="class",\
+        markers={"false benign":"X","false malign":"X","b":"o","m":"o"})
+
+ 
+
+  
+    plt.legend(title="Legend",fontsize=8)
+    #plt.scatter(x=hard_sample["b_dist"],y=hard_sample["m_dist"],c=hard_sample["actual"])
+
 
 def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
     if cmd=="rf" or cmd=="all":
@@ -303,7 +331,8 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
                     "rf__max_features": [None, "sqrt"],
                     "rf__criterion": ["gini", "entropy"]}
         #Train and test in cross validation grid search and test with test data
-        _,_,_,est=train_test_model(pipeIDRF,parameters,df_train,X_test,y_test,add_title="Random Forest with extracted features")#With new features
+        _,_,_,bestEst=train_test_model(pipeIDRF,parameters,df_train,X_test,y_test,add_title="Random Forest with extracted features")#With new features
+        scatter_hard_sample(bestEst,df_train,pipeIDM)
         fi=pd.DataFrame(est.steps[-1][1].feature_importances_,index=cols,columns=["Importance"])
         print(f"Feature importance:\n {fi.head(11)}")
 
@@ -327,7 +356,8 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
                     'svc__C':(0.1,0.5,1.0,10,50),
                     'svc__gamma':('scale','auto')
                     }
-        train_test_model(pipeIDSVC,parameters,df_train,X_test,y_test,add_title="SVC with extracted features")
+        _,_,_,bestEst=train_test_model(pipeIDSVC,parameters,df_train,X_test,y_test,add_title="SVC with extracted features")
+        scatter_hard_sample(bestEst,df_train,pipeIDM)
         print("\n******Without extracted features********\n")
         train_test_model(pipeISVC,parameters,df_train,X_test,y_test,add_title="SVC without extracted features")
     
@@ -348,7 +378,8 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
                     'lr__max_iter':[500,1000]
 
                     }
-        train_test_model(pipeIDLR,parameters,df_train,X_test,y_test,add_title="Log Regression with extracted features")
+        _,_,_,bestEst=train_test_model(pipeIDLR,parameters,df_train,X_test,y_test,add_title="Log Regression with extracted features")
+        scatter_hard_sample(bestEst,df_train,pipeIDM)
         print("\n******Without extracted features********\n")
         train_test_model(pipeILR,parameters,df_train,X_test,y_test,add_title="Log Regression without extracted features")
 
@@ -366,7 +397,8 @@ def training(pipeIDM,pipeIM,df_train,X_test,y_test,cmd):
         parameters = {'knn__n_neighbors':(1,2, 3,5,10),
                     'knn__weights':("uniform","distance"),
                     }
-        train_test_model(pipeIDKNN,parameters,df_train,X_test,y_test,add_title="K nearest neighboors with extracted features")
+        _,_,_,bestEst=train_test_model(pipeIDKNN,parameters,df_train,X_test,y_test,add_title="K nearest neighboors with extracted features")
+        scatter_hard_sample(bestEst,df_train,pipeIDM)
         print("\n******Without extracted features********\n")
         train_test_model(pipeIKNN,parameters,df_train,X_test,y_test,add_title="K nearest neighboors without extracted features")
 
@@ -426,12 +458,12 @@ if __name__ == "__main__":
     #Data analysis and exploration
     if args.run_analysis!='no':
         data_exploration(X_train,y_train,imp,ext,scaler,args.run_analysis)
-        plt.show()
+        
 
     if args.run_training!='no':
         training(pipeIDM,pipeIM,df_train,X_test,y_test,args.run_training)
-        plt.show()
-
+       
+    plt.show()
     exit()
   
 
