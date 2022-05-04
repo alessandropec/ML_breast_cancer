@@ -16,7 +16,7 @@ The dataset used is uploaded in the repository and taken from https://archive.ic
 
 Clone the repository, install dependencies, and run the following command for the full results.
 ```
-python main.py --data_dir=[path of dataset (./data/breast-cancer-wisconsin.data)]
+python main.py --data=[path of dataset (./data/breast-cancer-wisconsin.data)]
 ```
 
 ### Run single phase of analysis and/or training
@@ -25,7 +25,7 @@ the script *main.py* can be used with the following arguments:
   -h, --help            
                         show this help message and exit
                         
-  --data_dir REQUIRED
+  --data REQUIRED
                         The path of the file containing the dataset
                         
   --run_analysis DEFAULT: [all]
