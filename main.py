@@ -450,6 +450,7 @@ def training(pipeIDM,pipeIM,pipeIDMS,df_train,X_test,y_test,cmd):
         tmpIDMS.append(("svc",svc)) #Append the model
 
         tmpIDM=list(pipeIDM.steps) #Copy the full ipeline
+        tmpIDM.append(("scaler2",scaler))
         tmpIDM.append(("svc",svc)) #Append the model
 
         tmpIM=list(pipeIM.steps)
@@ -464,13 +465,13 @@ def training(pipeIDM,pipeIM,pipeIDMS,df_train,X_test,y_test,cmd):
         
         parameters = {'svc__kernel':('linear', 'poly', 'rbf', 'sigmoid'),
                     'svc__C':(0.1,0.5,1.0,10,50),
-                    'svc__gamma':('scale','auto')
+                    'svc__gamma':('scale','auto') 
                     }
         #Train and test in cross validation grid search and test with test data
         print("\n******With extracted features and original********\n")
         _,_,_,bestEst=train_test_model(pipeIDRFS,parameters,df_train,X_test,y_test,add_title="SVC with extracted and original features")#With new features
-        scatter_hard_sample(bestEst,df_train,pipeIDMS,prob=True,add_txt="CD and original features (train)")
-        scatter_hard_sample(bestEst,pd.concat([X_test,y_test],axis=1),pipeIDMS,prob=True,add_txt="CD and original features (test)")
+        scatter_hard_sample(bestEst,df_train,pipeIDM,prob=True,add_txt="CD and original features (train)")
+        scatter_hard_sample(bestEst,pd.concat([X_test,y_test],axis=1),pipeIDM,prob=True,add_txt="CD and original features (test)")
      
 
         print("\n******With only extracted features********\n")
@@ -540,6 +541,7 @@ def training(pipeIDM,pipeIM,pipeIDMS,df_train,X_test,y_test,cmd):
         tmpIDMS.append(("knn",knn)) #Append the model
 
         tmpIDM=list(pipeIDM.steps) #Copy the full ipeline
+        tmpIDM.append(("scaler 2",scaler)) #Append the model
         tmpIDM.append(("knn",knn)) #Append the model
 
         tmpIM=list(pipeIM.steps)
@@ -645,4 +647,3 @@ if __name__ == "__main__":
        
     plt.show()
     exit()
-  
