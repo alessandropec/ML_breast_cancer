@@ -1,0 +1,120 @@
+**************KNN*************************
+
+******With extracted features and original********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor', DistExtractor()),
+                                       ('Standard scaler2', StandardScaler()),
+                                       ('DF builder', DfBuilder()),
+                                       ('knn', KNeighborsClassifier())]),
+             param_grid={'knn__n_neighbors': (1, 2, 3, 5, 10),
+                         'knn__weights': ('uniform', 'distance')})
+Best param:
+ {'knn__n_neighbors': 3, 'knn__weights': 'distance'}
+F1 avg cross val score:  0.970967741935484
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       1.00      1.00      1.00       143
+           m       1.00      1.00      1.00       167
+
+    accuracy                           1.00       310
+   macro avg       1.00      1.00      1.00       310
+weighted avg       1.00      1.00      1.00       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.92      0.95      0.93        82
+           m       0.94      0.90      0.92        71
+
+    accuracy                           0.93       153
+   macro avg       0.93      0.93      0.93       153
+weighted avg       0.93      0.93      0.93       153
+
+
+******With only extracted features********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor',
+                                        DistExtractor(onlyCD=True)),
+                                       ('scaler 2', StandardScaler()),
+                                       ('knn', KNeighborsClassifier())]),
+             param_grid={'knn__n_neighbors': (1, 2, 3, 5, 10),
+                         'knn__weights': ('uniform', 'distance')})
+Best param:
+ {'knn__n_neighbors': 10, 'knn__weights': 'distance'}
+F1 avg cross val score:  0.9516129032258064
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       1.00      1.00      1.00       143
+           m       1.00      1.00      1.00       167
+
+    accuracy                           1.00       310
+   macro avg       1.00      1.00      1.00       310
+weighted avg       1.00      1.00      1.00       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.97      0.94      0.96        82
+           m       0.93      0.97      0.95        71
+
+    accuracy                           0.95       153
+   macro avg       0.95      0.96      0.95       153
+weighted avg       0.96      0.95      0.95       153
+
+
+******Without extracted features********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('knn', KNeighborsClassifier())]),
+             param_grid={'knn__n_neighbors': (1, 2, 3, 5, 10),
+                         'knn__weights': ('uniform', 'distance')})
+Best param:
+ {'knn__n_neighbors': 3, 'knn__weights': 'uniform'}
+F1 avg cross val score:  0.9612903225806452
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.99      0.96      0.97       143
+           m       0.96      0.99      0.98       167
+
+    accuracy                           0.97       310
+   macro avg       0.98      0.97      0.97       310
+weighted avg       0.97      0.97      0.97       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.91      0.95      0.93        82
+           m       0.94      0.89      0.91        71
+
+    accuracy                           0.92       153
+   macro avg       0.92      0.92      0.92       153
+weighted avg       0.92      0.92      0.92       153

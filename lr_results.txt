@@ -1,0 +1,119 @@
+******Without extracted features********
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('lr',
+                                        LogisticRegression(random_state=42))]),
+             param_grid={'lr__C': [1, 10, 100], 'lr__dual': [False],
+                         'lr__max_iter': [500, 1000],
+                         'lr__penalty': ('none', 'l2')})
+Best param:
+ {'lr__C': 1, 'lr__dual': False, 'lr__max_iter': 500, 'lr__penalty': 'none'}
+F1 avg cross val score:  0.9516129032258064
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.94      0.95      0.95       143
+           m       0.96      0.95      0.95       167
+
+    accuracy                           0.95       310
+   macro avg       0.95      0.95      0.95       310
+weighted avg       0.95      0.95      0.95       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.95      0.95      0.95        82
+           m       0.94      0.94      0.94        71
+
+    accuracy                           0.95       153
+   macro avg       0.95      0.95      0.95       153
+weighted avg       0.95      0.95      0.95       153
+
+******With extracted features and original********
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor', DistExtractor()),
+                                       ('Standard scaler2', StandardScaler()),
+                                       ('DF builder', DfBuilder()),
+                                       ('lr',
+                                        LogisticRegression(random_state=42))]),
+             param_grid={'lr__C': [1, 10, 100], 'lr__dual': [False],
+                         'lr__max_iter': [500, 1000],
+                         'lr__penalty': ('none', 'l2')})
+Best param:
+ {'lr__C': 10, 'lr__dual': False, 'lr__max_iter': 500, 'lr__penalty': 'l2'}
+F1 avg cross val score:  0.9548387096774194
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.94      0.96      0.95       143
+           m       0.96      0.95      0.95       167
+
+    accuracy                           0.95       310
+   macro avg       0.95      0.95      0.95       310
+weighted avg       0.95      0.95      0.95       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.94      0.95      0.95        82
+           m       0.94      0.93      0.94        71
+
+    accuracy                           0.94       153
+   macro avg       0.94      0.94      0.94       153
+weighted avg       0.94      0.94      0.94       153
+
+
+******With only extracted features********
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor',
+                                        DistExtractor(onlyCD=True)),
+                                       ('lr',
+                                        LogisticRegression(random_state=42))]),
+             param_grid={'lr__C': [1, 10, 100], 'lr__dual': [False],
+                         'lr__max_iter': [500, 1000],
+                         'lr__penalty': ('none', 'l2')})
+Best param:
+ {'lr__C': 1, 'lr__dual': False, 'lr__max_iter': 500, 'lr__penalty': 'none'}
+F1 avg cross val score:  0.9483870967741936
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.96      0.93      0.94       143
+           m       0.94      0.96      0.95       167
+
+    accuracy                           0.95       310
+   macro avg       0.95      0.95      0.95       310
+weighted avg       0.95      0.95      0.95       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.96      0.95      0.96        82
+           m       0.94      0.96      0.95        71
+
+    accuracy                           0.95       153
+   macro avg       0.95      0.95      0.95       153
+weighted avg       0.95      0.95      0.95       153

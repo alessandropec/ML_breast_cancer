@@ -1,0 +1,162 @@
+**************Random Forest*************************
+******Without extracted features********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('rf',
+                                        RandomForestClassifier(random_state=42))]),
+             param_grid={'rf__criterion': ['gini', 'entropy'],
+                         'rf__max_depth': (1, 2, 5, 8, None),
+                         'rf__max_features': [None, 'sqrt'],
+                         'rf__min_samples_split': (2, 5, 10),
+                         'rf__n_estimators': (1, 5, 10, 50, 100, 500)})
+Best param:
+ {'rf__criterion': 'gini', 'rf__max_depth': 5, 'rf__max_features': 'sqrt', 'rf__min_samples_split': 2, 'rf__n_estimators': 500}
+F1 avg cross val score:  0.9580645161290324
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.99      0.95      0.97       143
+           m       0.96      0.99      0.98       167
+
+    accuracy                           0.97       310
+   macro avg       0.98      0.97      0.97       310
+weighted avg       0.97      0.97      0.97       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.96      0.95      0.96        82
+           m       0.94      0.96      0.95        71
+
+    accuracy                           0.95       153
+   macro avg       0.95      0.95      0.95       153
+weighted avg       0.95      0.95      0.95       153
+
+Feature importance:
+                              Importance
+clump_thickness                0.073703
+uniformity_of_cell_size        0.267035
+uniformity_of_cell_shape       0.259218
+marginal_adhesion              0.023490
+single_epithelial_cell_size    0.056485
+bare_nuclei                    0.152220
+bland_chromatin                0.092278
+normal_nucleoli                0.067951
+mitoses                        0.007620
+
+
+******With extracted features and original********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor', DistExtractor()),
+                                       ('Standard scaler2', StandardScaler()),
+                                       ('DF builder', DfBuilder()),
+                                       ('rf',
+                                        RandomForestClassifier(random_state=42))]),
+             param_grid={'rf__criterion': ['gini', 'entropy'],
+                         'rf__max_depth': (1, 2, 5, 8, None),
+                         'rf__max_features': [None, 'sqrt'],
+                         'rf__min_samples_split': (2, 5, 10),
+                         'rf__n_estimators': (1, 5, 10, 50, 100, 500)})
+Best param:
+ {'rf__criterion': 'gini', 'rf__max_depth': None, 'rf__max_features': 'sqrt', 'rf__min_samples_split': 5, 'rf__n_estimators': 50}
+F1 avg cross val score:  0.9612903225806452
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.99      0.98      0.99       143
+           m       0.98      0.99      0.99       167
+
+    accuracy                           0.99       310
+   macro avg       0.99      0.99      0.99       310
+weighted avg       0.99      0.99      0.99       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.96      0.95      0.96        82
+           m       0.94      0.96      0.95        71
+
+    accuracy                           0.95       153
+   macro avg       0.95      0.95      0.95       153
+weighted avg       0.95      0.95      0.95       153
+
+Feature importance:
+                              Importance
+clump_thickness                0.024734
+uniformity_of_cell_size        0.095617
+uniformity_of_cell_shape       0.131112
+marginal_adhesion              0.012560
+single_epithelial_cell_size    0.026076
+bare_nuclei                    0.072538
+bland_chromatin                0.049758
+normal_nucleoli                0.044938
+mitoses                        0.008066
+b_dist                         0.412134
+m_dist                         0.122469
+
+******With only extracted features********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor',
+                                        DistExtractor(onlyCD=True)),
+                                       ('rf',
+                                        RandomForestClassifier(random_state=42))]),
+             param_grid={'rf__criterion': ['gini', 'entropy'],
+                         'rf__max_depth': (1, 2, 5, 8, None),
+                         'rf__max_features': [None, 'sqrt'],
+                         'rf__min_samples_split': (2, 5, 10),
+                         'rf__n_estimators': (1, 5, 10, 50, 100, 500)})
+Best param:
+ {'rf__criterion': 'gini', 'rf__max_depth': 2, 'rf__max_features': 'sqrt', 'rf__min_samples_split': 2, 'rf__n_estimators': 100}
+F1 avg cross val score:  0.9516129032258064
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.98      0.93      0.95       143
+           m       0.94      0.98      0.96       167
+
+    accuracy                           0.96       310
+   macro avg       0.96      0.96      0.96       310
+weighted avg       0.96      0.96      0.96       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.97      0.95      0.96        82
+           m       0.95      0.97      0.96        71
+
+    accuracy                           0.96       153
+   macro avg       0.96      0.96      0.96       153
+weighted avg       0.96      0.96      0.96       153
+
+Feature importance:
+         Importance
+b_dist    0.534758
+m_dist    0.465242
+
+******Without extracted features********

@@ -1,0 +1,130 @@
+**************Support Vector Classifier*************************
+
+******With extracted features and original********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor', DistExtractor()),
+                                       ('Standard scaler2', StandardScaler()),
+                                       ('DF builder', DfBuilder()),
+                                       ('svc',
+                                        SVC(probability=True,
+                                            random_state=42))]),
+             param_grid={'svc__C': (0.1, 0.5, 1.0, 10, 50),
+                         'svc__gamma': ('scale', 'auto'),
+                         'svc__kernel': ('linear', 'poly', 'rbf', 'sigmoid')})
+Best param:
+ {'svc__C': 1.0, 'svc__gamma': 'scale', 'svc__kernel': 'poly'}
+F1 avg cross val score:  0.9548387096774194
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.99      0.92      0.95       143
+           m       0.93      0.99      0.96       167
+
+    accuracy                           0.96       310
+   macro avg       0.96      0.96      0.96       310
+weighted avg       0.96      0.96      0.96       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       1.00      0.93      0.96        82
+           m       0.92      1.00      0.96        71
+
+    accuracy                           0.96       153
+   macro avg       0.96      0.96      0.96       153
+weighted avg       0.96      0.96      0.96       153
+
+
+******With only extracted features********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('Distance extractor',
+                                        DistExtractor(onlyCD=True)),
+                                       ('scaler2', StandardScaler()),
+                                       ('svc',
+                                        SVC(probability=True,
+                                            random_state=42))]),
+             param_grid={'svc__C': (0.1, 0.5, 1.0, 10, 50),
+                         'svc__gamma': ('scale', 'auto'),
+                         'svc__kernel': ('linear', 'poly', 'rbf', 'sigmoid')})
+Best param:
+ {'svc__C': 0.1, 'svc__gamma': 'scale', 'svc__kernel': 'rbf'}
+F1 avg cross val score:  0.9516129032258064
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.98      0.93      0.95       143
+           m       0.94      0.98      0.96       167
+
+    accuracy                           0.96       310
+   macro avg       0.96      0.96      0.96       310
+weighted avg       0.96      0.96      0.96       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       0.97      0.95      0.96        82
+           m       0.95      0.97      0.96        71
+
+    accuracy                           0.96       153
+   macro avg       0.96      0.96      0.96       153
+weighted avg       0.96      0.96      0.96       153
+
+
+******Without extracted features********
+
+
+Cross validation results:
+Pipeline:
+ GridSearchCV(estimator=Pipeline(steps=[('Imputer',
+                                        SimpleImputer(strategy='median')),
+                                       ('Standard scaler', StandardScaler()),
+                                       ('svc',
+                                        SVC(probability=True,
+                                            random_state=42))]),
+             param_grid={'svc__C': (0.1, 0.5, 1.0, 10, 50),
+                         'svc__gamma': ('scale', 'auto'),
+                         'svc__kernel': ('linear', 'poly', 'rbf', 'sigmoid')})
+Best param:
+ {'svc__C': 1.0, 'svc__gamma': 'scale', 'svc__kernel': 'poly'}
+F1 avg cross val score:  0.9580645161290324
+['b' 'm']
+
+Classification report for TRAIN:
+               precision    recall  f1-score   support
+
+           b       0.99      0.92      0.95       143
+           m       0.93      0.99      0.96       167
+
+    accuracy                           0.96       310
+   macro avg       0.96      0.96      0.96       310
+weighted avg       0.96      0.96      0.96       310
+
+
+Classification report for TEST:
+               precision    recall  f1-score   support
+
+           b       1.00      0.93      0.96        82
+           m       0.92      1.00      0.96        71
+
+    accuracy                           0.96       153
+   macro avg       0.96      0.96      0.96       153
+weighted avg       0.96      0.96      0.96       153
+
